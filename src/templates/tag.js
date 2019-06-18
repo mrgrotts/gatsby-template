@@ -8,7 +8,9 @@ class Tag extends Component {
     const posts = this.props.data.allMarkdownRemark.edges
     const postLinks = posts.map(post => (
       <li key={post.node.fields.slug}>
-        <Link to={post.node.fields.slug}>{post.node.frontmatter.title}</Link>
+        <Link to={`/${post.node.fields.slug}`}>
+          {post.node.frontmatter.title}
+        </Link>
       </li>
     ))
 
@@ -30,7 +32,7 @@ class Tag extends Component {
 
 export default Tag
 
-export const pageQuery = graphql`
+export const tagQuery = graphql`
   query TagQuery($tag: String) {
     allMarkdownRemark(
       sort: { fields: [frontmatter___date], order: DESC }

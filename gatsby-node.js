@@ -9,10 +9,8 @@ const toKebabCase = string =>
     .join("-")
 
 const createSlug = value => {
-  // const filename = path.basename(value, ".md")
   const parsed = path.parse(value)
   const dir = parsed.dir.split("/")
-  // console.log("slug stuff: ", parsed, dir)
 
   return `${dir.slice(dir.findIndex(x => x === "content") + 1).join("/")}/${
     parsed.name
@@ -21,18 +19,69 @@ const createSlug = value => {
 
 const createTagSlug = tag => `/blog/tags/${toKebabCase(tag)}/`
 
-const checkForCategory = filepath => {
+const isCategory = filepath => {
   try {
     return fs.lstatSync(filepath.replace(/.md/, "")).isDirectory()
   } catch (error) {
-    // console.error(error)
     return false
   }
 }
 
+const createBlogPage = (node, createPage) => {
+  const template = path.resolve(`${__dirname}/src/templates/blog.js`)
+
+  return createPage({
+    component: template,
+    path: `/${node.fields.slug}`,
+    context: {
+      slug: node.fields.slug,
+      highlight: node.frontmatter.highlight,
+      shadow: node.frontmatter.shadow
+    }
+  })
+}
+
+const createCategoryPages = (node, createPage) => {
+  const template = path.resolve(`${__dirname}/src/templates/category.js`)
+  const filename = path.basename(node.fileAbsolutePath, ".md")
+
+  return Promise.all([
+    createPage({
+      component: template,
+      path: `/blog/categories/${filename}`,
+      context: {
+        category: filename,
+        slug: `/blog/categories/${filename}`,
+        highlight: node.frontmatter.highlight,
+        shadow: node.frontmatter.shadow
+      }
+    }),
+    createPage({
+      component: template,
+      path: `/${node.fields.slug}`,
+      context: {
+        category: filename,
+        slug: node.fields.slug,
+        highlight: node.frontmatter.highlight,
+        shadow: node.frontmatter.shadow
+      }
+    })
+  ])
+}
+
+const createTagPages = (tags, createPage) => {
+  const template = path.resolve(`${__dirname}/src/templates/tag.js`)
+
+  tags.forEach(tag =>
+    createPage({
+      path: createTagSlug(tag),
+      component: template,
+      context: { tag }
+    })
+  )
+}
+
 exports.onCreateNode = ({ node, actions, getNode }) => {
-  // pretty print the node
-  // console.log(JSON.stringify(node, undefined, 4))
   const { createNodeField } = actions
 
   if (node.internal.type === "MarkdownRemark") {
@@ -40,7 +89,6 @@ exports.onCreateNode = ({ node, actions, getNode }) => {
     createNodeField({ node, name: "slug", value: slug })
 
     const parent = getNode(node.parent)
-    // console.log(parent.name, parent)
     createNodeField({ node, name: "category", value: parent.name })
 
     if (node.frontmatter.tags) {
@@ -52,11 +100,6 @@ exports.onCreateNode = ({ node, actions, getNode }) => {
 
 exports.createPages = async ({ graphql, actions }) => {
   const { createPage } = actions
-  const blogTemplate = path.resolve(`${__dirname}/src/templates/blog.js`)
-  const tagTemplate = path.resolve(`${__dirname}/src/templates/tag.js`)
-  const categoryTemplate = path.resolve(
-    `${__dirname}/src/templates/category.js`
-  )
 
   try {
     const query = await graphql(`
@@ -82,62 +125,28 @@ exports.createPages = async ({ graphql, actions }) => {
       }
     `)
 
-    query.data.allMarkdownRemark.edges.forEach(({ node }) => {
-      const filename = path.basename(node.fileAbsolutePath, ".md")
-      const isCategory = checkForCategory(node.fileAbsolutePath)
-      // console.log("category? ", isCategory, filename, node.fields.slug)
+    const {
+      data: {
+        allMarkdownRemark: { edges }
+      }
+    } = query
 
-      if (isCategory) {
-        return Promise.all([
-          createPage({
-            component: categoryTemplate,
-            path: `/blog/categories/${filename}`,
-            context: {
-              category: filename,
-              slug: `/blog/categories/${filename}`,
-              highlight: node.frontmatter.highlight,
-              shadow: node.frontmatter.shadow
-            }
-          }),
-          createPage({
-            component: categoryTemplate,
-            path: `/${node.fields.slug}`,
-            context: {
-              category: filename,
-              slug: node.fields.slug,
-              highlight: node.frontmatter.highlight,
-              shadow: node.frontmatter.shadow
-            }
-          })
-        ])
+    edges.forEach(({ node }) => {
+      if (isCategory(node.fileAbsolutePath)) {
+        createCategoryPages(node, createPage)
       } else {
-        return createPage({
-          component: blogTemplate,
-          // path: `/blog/${node.fields.slug}`,
-          path: `/${node.fields.slug}`,
-          context: {
-            slug: node.fields.slug,
-            highlight: node.frontmatter.highlight,
-            shadow: node.frontmatter.shadow
-          }
-        })
+        createBlogPage(node, createPage)
       }
     })
 
     let tags = []
-    query.data.allMarkdownRemark.edges.forEach(({ node }) => {
+    edges.forEach(({ node }) => {
       if (node && node.frontmatter && node.frontmatter.tags) {
-        tags = tags.concat(node.frontmatter.tags)
+        tags = [...tags, ...node.frontmatter.tags]
       }
     })
 
-    tags.forEach(tag =>
-      createPage({
-        path: createTagSlug(tag),
-        component: tagTemplate,
-        context: { tag }
-      })
-    )
+    createTagPages(tags, createPage)
   } catch (error) {
     console.error(error)
   }
