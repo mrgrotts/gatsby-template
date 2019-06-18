@@ -1,0 +1,303 @@
+*, *:before, *:after {
+    border-collapse: inherit;
+    box-sizing: inherit;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+
+[hidden] {
+    display: none !important;
+}
+
+html {
+    border-collapse: collapse;
+    box-sizing: border-box;
+    overflow-x: hidden;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+}
+
+#___gatsby div[role="group"] {
+    display: grid;
+    grid-template-areas: 
+    "header"
+    "main"
+    "footer";
+    grid-template-rows: 10vh auto 10vh;
+    
+    min-height: 100vh;
+}
+
+@supports not (display: grid) {
+    #___gatsby div[role="group"] {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        margin: 0 auto;
+        min-height: 100vh;
+     }
+}
+
+*:not(body) {
+    background-clip: border-box;
+    background-size: cover;
+    background-origin: border-box;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+header {
+    align-items: center;
+    background: #0a0a0a;
+    display: flex;
+    flex-flow: row nowrap;
+    grid-auto-flow: row;
+    grid-row: header;
+    height: 10vh;
+    justify-content: space-between;
+    padding: 1rem;
+    position: relative;
+}
+
+main {
+    grid-auto-flow: column;
+    grid-row: main;
+    margin: 0 auto;
+    max-width: 360px;
+    position: relative;
+}
+
+footer {
+    align-items: center;
+    display: flex;
+    grid-auto-flow: row;
+    grid-row: footer;
+    height: 10vh;
+    justify-content: space-between;
+    padding: 1rem;
+    position: relative;
+}
+
+a {
+    color: #0a0a0a;
+    text-decoration: none;
+}
+
+a:active,
+a:focus,
+a:hover {
+  color: rgba(11, 100, 233, 1);
+}
+
+h1 {
+    font-size: 2rem;
+    font-weight: 300;
+}
+
+h2 {
+    font-size: 1.8rem;
+    font-weight: 400;
+}
+
+h3 {
+    font-size: 1.6rem;
+    font-weight: 400;
+}
+
+h4 {
+    font-size: 1.4rem;
+    font-weight: 500;
+}
+
+h5 {
+    font-size: 1.2rem;
+    font-weight: 700;
+}
+
+h6 {
+    font-size: 1rem;
+    font-weight: 800;
+}
+
+ol, ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+li {
+    text-decoration: none;
+}
+
+ul li:last-child a {
+    margin-right: 0;
+}
+
+@media screen and (min-width: 45rem) {
+    main {
+        max-width: 1080px;
+    }
+    
+    h1 {
+        font-size: 2.5rem;
+    }
+
+    h2 {
+        font-size: 2.25rem;
+    }
+
+    h3 {
+        font-size: 2rem;
+    }
+
+    h4 {
+        font-size: 1.75rem;
+    }
+
+    h5 {
+        font-size: 1.5rem;
+    }
+
+    h6 {
+        font-size: 1.25rem;
+    }
+}
+
+/* https://codepen.io/anon/pen/xoVyxv */
+@keyframes hamburger-1-open {
+    0%   {
+        width: 2rem;
+    }
+    40%  {
+        background-color: rgba(11, 100, 233, 1); 
+        transform: translate(1rem, 0px);
+        width: 8px; 
+    }
+    75%, 80%  {
+        animation-timing-function: cubic-bezier(0, 1, 1, 1);
+        transform: translate(1rem, -1rem);
+        width: 8px;
+    }
+    100% {
+        background-color: rgba(31, 190, 218, 1);
+        transform: translate(1rem, 1rem) rotate(40deg);
+        width: 8px; 
+    }
+}
+  
+@keyframes hamburger-2-open {
+    80%  {
+        background-color: rgba(31, 190, 218, 1); 
+        transform: translate(0px, 0px) rotate(0deg);
+    }
+    100% {
+        background-color: rgba(31, 190, 218, 1);
+        transform: translate(8px, 0px) rotate(40deg);
+    }
+}
+  
+@keyframes hamburger-3-open {
+    80%  {
+        background-color: rgba(31, 190, 218, 1); 
+        transform: translate(0px, 0px) rotate(0deg);
+    }
+    100% {
+        background-color: rgba(31, 190, 218, 1); 
+        transform: translate(8px, -11px) rotate(-40deg);
+    }
+}
+  
+@keyframes hamburger-1-close {
+    0%, 70% {
+        width: 0px;
+    }
+    100%    {
+        width: 2rem; 
+        transform: translate(0, 0);
+    }
+}
+  
+@keyframes hamburger-2-close {
+    0% {
+        background-color: #ffffff; 
+        width: 2rem;
+    }
+    20%  {
+        background-color: #ffffff; 
+        transform: translate(0, 0px) rotate(40deg);
+        width: 8px;  
+    }
+    40%  {
+        background-color: rgba(31, 190, 218, 1); 
+        width: 0px;
+    }
+    65%  {
+        animation-timing-function: cubic-bezier(0, 1, 1, 1);
+        transform: translate(0, -1.5rem); 
+    }
+    80%  {
+        width: 0px;
+    }
+    100% {
+        transform: translate(0, 0px);
+        width: 2rem; 
+    }
+}
+  
+@keyframes hamburger-3-close {
+    0%   {
+        background-color: #ffffff; 
+        width: 2rem;
+    }
+    20%  {
+        background-color: #ffffff; 
+        transform: translate(0, -12px) rotate(-40deg);
+        width: 8px; 
+    }
+    40%  {
+        background-color: rgba(31, 190, 218, 1);}
+    65%  {
+        animation-timing-function: cubic-bezier(0, 1, 1, 1);
+        transform: translate(0, -2rem); 
+    }
+    90%  {
+        width: 8px;
+    }
+    100% {
+        transform: translate(0, 0px);
+        width: 2rem; 
+    }
+}
+
+/* ----------- Apple Watch ----------- 
+@media (max-device-width: 42mm) and (min-device-width: 38mm) {}
+*/
+
+/* ----------- Helpers ----------- 
+
+@media (pointer:coarse) {
+    .which-pointer::after {
+        content: "You have a coarse pointer, are you on a touchscreen device?";    
+    } 
+}
+
+@media (pointer:fine) {
+    .which-pointer::after {
+        content: "You have a fine pointer, are you using a mouse or trackpad?";    
+    } 
+}
+
+@media (hover) {
+    .can-i-hover::after {
+        content: "You look like you can hover.";    
+    } 
+}
+
+@media  (hover:none) {
+    .can-i-hover::after {
+        content: "I don't think you can hover.";    
+    } 
+}
+*/
