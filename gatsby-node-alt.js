@@ -1,3 +1,4 @@
+const fs = require("fs")
 const path = require("path")
 
 const toKebabCase = string =>
@@ -18,38 +19,77 @@ const createSlug = value => {
 
 const createTagSlug = tag => `/blog/tags/${toKebabCase(tag)}/`
 
+const isCategory = filepath => {
+  try {
+    return fs.lstatSync(filepath.replace(/.md/, "")).isDirectory()
+  } catch (error) {
+    return false
+  }
+}
+
 const createBlogPage = (node, createPage) => {
-  const component = path.resolve(`${__dirname}/src/templates/blog.js`)
+  const template = path.resolve(`${__dirname}/src/templates/blog.js`)
 
   return createPage({
-    component,
+    component: template,
     path: `/${node.fields.slug}`,
     context: {
+      slug: node.fields.slug,
       highlight: node.frontmatter.highlight,
-      shadow: node.frontmatter.shadow,
-      slug: node.fields.slug
+      shadow: node.frontmatter.shadow
     }
   })
 }
 
+const createCategoryPages = (node, createPage) => {
+  const template = path.resolve(`${__dirname}/src/templates/category.js`)
+  const filename = path.basename(node.fileAbsolutePath, ".md")
+
+  return Promise.all([
+    createPage({
+      component: template,
+      path: `/blog/categories/${filename}`,
+      context: {
+        category: filename,
+        slug: `/blog/categories/${filename}`,
+        highlight: node.frontmatter.highlight,
+        shadow: node.frontmatter.shadow
+      }
+    }),
+    createPage({
+      component: template,
+      path: `/${node.fields.slug}`,
+      context: {
+        category: filename,
+        slug: node.fields.slug,
+        highlight: node.frontmatter.highlight,
+        shadow: node.frontmatter.shadow
+      }
+    })
+  ])
+}
+
 const createTagPages = (tags, createPage) => {
-  const component = path.resolve(`${__dirname}/src/templates/tag.js`)
+  const template = path.resolve(`${__dirname}/src/templates/tag.js`)
 
   tags.forEach(tag =>
     createPage({
-      component,
       path: createTagSlug(tag),
+      component: template,
       context: { tag }
     })
   )
 }
 
-exports.onCreateNode = ({ node, actions }) => {
+exports.onCreateNode = ({ node, actions, getNode }) => {
   const { createNodeField } = actions
 
   if (node.internal.type === "MarkdownRemark") {
     const slug = createSlug(node.fileAbsolutePath)
     createNodeField({ node, name: "slug", value: slug })
+
+    const parent = getNode(node.parent)
+    createNodeField({ node, name: "category", value: parent.name })
 
     if (node.frontmatter.tags) {
       const tagSlugs = node.frontmatter.tags.map(createTagSlug)
@@ -72,9 +112,11 @@ exports.createPages = async ({ graphql, actions }) => {
             node {
               fileAbsolutePath
               fields {
+                category
                 slug
               }
               frontmatter {
+                category
                 tags
               }
             }
@@ -89,7 +131,13 @@ exports.createPages = async ({ graphql, actions }) => {
       }
     } = query
 
-    edges.forEach(({ node }) => createBlogPage(node, createPage))
+    edges.forEach(({ node }) => {
+      if (isCategory(node.fileAbsolutePath)) {
+        createCategoryPages(node, createPage)
+      } else {
+        createBlogPage(node, createPage)
+      }
+    })
 
     let tags = []
     edges.forEach(({ node }) => {

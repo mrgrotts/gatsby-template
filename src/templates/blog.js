@@ -2,10 +2,11 @@ import React, { Component } from "react"
 import { Link, graphql } from "gatsby"
 import styled from "styled-components"
 
+import Head from "../components/head"
 import Layout from "../components/layout"
 
 const Divider = styled.hr`
-  border: 2px solid rgba(11, 100, 233, 1);
+  border: 1px solid rgba(11, 100, 233, 1);
   border-radius: 1rem;
   box-shadow: 0 1px 1px rgba(0, 0, 0, 0.15);
   margin: 2rem 0;
@@ -17,6 +18,17 @@ const Tags = styled.nav`
   text-align: left;
 `
 
+const Tag = styled(Link)`
+  color: rgba(50, 50, 50, 1);
+  cursor: pointer;
+
+  &:active,
+  :hover,
+  :focus {
+    color: rgba(11, 100, 233, 1);
+  }
+`
+
 const Categories = styled.section`
   align-items: center;
   display: flex;
@@ -26,6 +38,7 @@ const Category = styled(Link)`
   background: rgba(11, 100, 233, 1);
   border-radius: 1rem;
   color: rgba(255, 255, 255, 1);
+  cursor: pointer;
   margin-left: 1rem;
   padding: 0.5rem 0.75rem 0.5rem 0.75rem;
 
@@ -37,6 +50,15 @@ const Category = styled(Link)`
   }
 `
 
+const OverviewSection = styled.section`
+  margin-top: 1rem;
+`
+
+const Meta = styled.span`
+  font-size: 0.9rem;
+  font-weight: 900;
+`
+
 class Blog extends Component {
   render() {
     const post = this.props.data.markdownRemark
@@ -46,7 +68,7 @@ class Blog extends Component {
     if (post.fields.tagSlugs) {
       tagList = post.fields.tagSlugs.map((tag, index) => (
         <span key={index}>
-          <Link to={tag}>{post.frontmatter.tags[index]}</Link>
+          <Tag to={tag}>{post.frontmatter.tags[index]}</Tag>
           {index < post.fields.tagSlugs.length - 1 && <>{`,`}&nbsp;</>}
         </span>
       ))
@@ -57,16 +79,16 @@ class Blog extends Component {
     // const date = <p>{new Date(post.frontmatter.date).toLocaleDateString()}</p>
 
     const Overview = (
-      <section>
-        <h6>
+      <OverviewSection>
+        <Meta>
           {tags} | {post.timeToRead} min read &middot;
-        </h6>
+        </Meta>
         <h1>{post.frontmatter.title}</h1>
         <h6>Author: {post.frontmatter.author}</h6>
         <p>
           <i>{post.excerpt}</i>
         </p>
-      </section>
+      </OverviewSection>
     )
 
     const TableOfContents = (
@@ -76,18 +98,33 @@ class Blog extends Component {
       </section>
     )
 
-    const CategoriesSection = (
-      <Categories>
-        <h6>Categories</h6>
-        <Category to={`/blog/categories/${post.frontmatter.category}`}>
-          {post.frontmatter.category.charAt(0).toUpperCase() +
-            post.frontmatter.category.slice(1)}
+    let categories
+    let CategoriesSection = null
+    if (this.props.location && this.props.location.pathname) {
+      const pathname = this.props.location.pathname.split("/").slice(2, -1)
+
+      categories = pathname.map((category, index) => (
+        <Category
+          key={index}
+          to={`/blog/${pathname.slice(0, index + 1).join("/")}`}
+        >
+          {category.charAt(0).toUpperCase() + category.slice(1)}
         </Category>
-      </Categories>
-    )
+      ))
+    }
+
+    if (categories && categories.length) {
+      CategoriesSection = (
+        <Categories>
+          <h6>Categories</h6>
+          {categories}
+        </Categories>
+      )
+    }
 
     return (
       <Layout>
+        <Head author={`jg`} banner={`../assets/home.png`} article />
         <article>
           {Overview}
           {TableOfContents}
@@ -111,7 +148,6 @@ export const blogQuery = graphql`
       timeToRead
       tableOfContents
       fields {
-        category
         slug
         tagSlugs
       }
@@ -120,8 +156,16 @@ export const blogQuery = graphql`
         tags
         date
         author
-        category
       }
     }
   }
 `
+// CategoriesSection = (
+//   <Categories>
+//     <h6>Categories</h6>
+//     <Category to={`/blog/categories/${post.frontmatter.category}`}>
+//       {post.frontmatter.category.charAt(0).toUpperCase() +
+//         post.frontmatter.category.slice(1)}
+//     </Category>
+//   </Categories>
+// )

@@ -51,12 +51,10 @@ export const categoryQuery = graphql`
       edges {
         node {
           fields {
-            category
             slug
           }
           frontmatter {
             title
-            category
           }
         }
       }
