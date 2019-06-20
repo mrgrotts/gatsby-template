@@ -8,6 +8,7 @@ tags:
   - gatsby
   - graphql
   - markdown
+  - frontend
 ---
 This is a v2 GatsbyJS Template. It relies on GraphQL to query
 content and other files from markdown. Sick, right? I totally agree.

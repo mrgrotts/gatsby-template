@@ -12,14 +12,12 @@ const createSlug = value => {
   const parsed = path.parse(value)
   const dir = parsed.dir.split("/")
 
-  return `${dir.slice(dir.findIndex(x => x === "content") + 1).join("/")}/${
-    parsed.name
-  }`
+  return `${dir.slice(dir.findIndex(x => x === "content") + 1).join("/")}`
 }
 
-const createTagSlug = tag => `/blog/tags/${toKebabCase(tag)}/`
+const createTagSlug = tag => `/resources/tags/${toKebabCase(tag)}/`
 
-const isCategory = filepath => {
+const isCollection = filepath => {
   try {
     return fs.lstatSync(filepath.replace(/.md/, "")).isDirectory()
   } catch (error) {
@@ -28,10 +26,10 @@ const isCategory = filepath => {
 }
 
 const createBlogPage = (node, createPage) => {
-  const template = path.resolve(`${__dirname}/src/templates/blog.js`)
+  const component = path.resolve(`${__dirname}/src/templates/resource.js`)
 
   return createPage({
-    component: template,
+    component,
     path: `/${node.fields.slug}`,
     context: {
       slug: node.fields.slug,
@@ -41,26 +39,26 @@ const createBlogPage = (node, createPage) => {
   })
 }
 
-const createCategoryPages = (node, createPage) => {
-  const template = path.resolve(`${__dirname}/src/templates/category.js`)
+const createCollectionPages = (node, createPage) => {
+  const component = path.resolve(`${__dirname}/src/templates/collection.js`)
   const filename = path.basename(node.fileAbsolutePath, ".md")
 
   return Promise.all([
     createPage({
-      component: template,
-      path: `/blog/categories/${filename}`,
+      component,
+      path: `/resources/collections/${filename}`,
       context: {
-        category: filename,
-        slug: `/blog/categories/${filename}`,
+        collection: filename,
+        slug: `/resources/collections/${filename}`,
         highlight: node.frontmatter.highlight,
         shadow: node.frontmatter.shadow
       }
     }),
     createPage({
-      component: template,
+      component,
       path: `/${node.fields.slug}`,
       context: {
-        category: filename,
+        collection: filename,
         slug: node.fields.slug,
         highlight: node.frontmatter.highlight,
         shadow: node.frontmatter.shadow
@@ -70,12 +68,12 @@ const createCategoryPages = (node, createPage) => {
 }
 
 const createTagPages = (tags, createPage) => {
-  const template = path.resolve(`${__dirname}/src/templates/tag.js`)
+  const component = path.resolve(`${__dirname}/src/templates/tag.js`)
 
   tags.forEach(tag =>
     createPage({
       path: createTagSlug(tag),
-      component: template,
+      component,
       context: { tag }
     })
   )
@@ -89,7 +87,7 @@ exports.onCreateNode = ({ node, actions, getNode }) => {
     createNodeField({ node, name: "slug", value: slug })
 
     const parent = getNode(node.parent)
-    createNodeField({ node, name: "category", value: parent.name })
+    createNodeField({ node, name: "collection", value: parent.name })
 
     if (node.frontmatter.tags) {
       const tagSlugs = node.frontmatter.tags.map(createTagSlug)
@@ -112,11 +110,11 @@ exports.createPages = async ({ graphql, actions }) => {
             node {
               fileAbsolutePath
               fields {
-                category
+                collection
                 slug
               }
               frontmatter {
-                category
+                collection
                 tags
               }
             }
@@ -132,8 +130,8 @@ exports.createPages = async ({ graphql, actions }) => {
     } = query
 
     edges.forEach(({ node }) => {
-      if (isCategory(node.fileAbsolutePath)) {
-        createCategoryPages(node, createPage)
+      if (isCollection(node.fileAbsolutePath)) {
+        createCollectionPages(node, createPage)
       } else {
         createBlogPage(node, createPage)
       }

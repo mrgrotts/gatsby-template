@@ -13,7 +13,7 @@ class Home extends Component {
           <p>
             <Link to={"/contact"}>Hit me up nerds</Link>, or maybe just{" "}
             <Link to={"/about"}>check me out</Link>. I do{" "}
-            <Link to={"/blog"}>have a blog</Link> though.{" "}
+            <Link to={"/resources"}>have a lotta resources</Link> though.{" "}
             <Link to={"/tags"}>Here are the tags</Link>.
           </p>
         </section>

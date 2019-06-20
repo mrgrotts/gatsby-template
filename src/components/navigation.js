@@ -68,8 +68,8 @@ const Navigation = ({ active, color, style }) => (
         </NavItem>
       </li>
       <li>
-        <NavItem to={"/blog"} activecolor={active} color={color}>
-          Blog
+        <NavItem to={"/resources"} activecolor={active} color={color}>
+          Resources
         </NavItem>
       </li>
       <li>

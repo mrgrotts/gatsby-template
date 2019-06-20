@@ -59,7 +59,7 @@ const Meta = styled.span`
   font-weight: 900;
 `
 
-class Blog extends Component {
+class Resource extends Component {
   render() {
     const post = this.props.data.markdownRemark
 
@@ -103,14 +103,17 @@ class Blog extends Component {
     if (this.props.location && this.props.location.pathname) {
       const pathname = this.props.location.pathname.split("/").slice(2, -1)
 
-      categories = pathname.map((category, index) => (
-        <Category
-          key={index}
-          to={`/blog/${pathname.slice(0, index + 1).join("/")}`}
-        >
-          {category.charAt(0).toUpperCase() + category.slice(1)}
-        </Category>
-      ))
+      categories = pathname.map((category, index) => {
+        console.log(pathname, pathname.slice(0, index + 1).join("/"))
+        return (
+          <Category
+            key={index}
+            to={`/resources/${pathname.slice(0, index + 1).join("/")}`}
+          >
+            {category.charAt(0).toUpperCase() + category.slice(1)}
+          </Category>
+        )
+      })
     }
 
     if (categories && categories.length) {
@@ -137,10 +140,10 @@ class Blog extends Component {
   }
 }
 
-export default Blog
+export default Resource
 
 export const blogQuery = graphql`
-  query BlogQuery($slug: String!) {
+  query ResourceQuery($slug: String!) {
     markdownRemark(fields: { slug: { eq: $slug } }) {
       id
       html

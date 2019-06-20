@@ -23,7 +23,7 @@ class Tag extends Component {
         </h1>
         <ul>{postLinks}</ul>
         <p>
-          <Link to="/blog/tags/">Browse all tags</Link>
+          <Link to="/resources/tags/">Browse all tags</Link>
         </p>
       </Layout>
     )

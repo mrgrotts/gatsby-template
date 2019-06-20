@@ -62,12 +62,12 @@ const Posts = () => {
   return <Cards>{renderedPosts}</Cards>
 }
 
-class Blog extends Component {
+class Resources extends Component {
   render() {
     return (
       <Layout>
         <section>
-          <h1>Hey, it's Joey G's Blog.</h1>
+          <h1>Hey, it's Joey G's Resources.</h1>
           <h2>I'm doing this to get a better gatsby template.</h2>
           <p>
             Want more <Link to="/about">about me</Link>? If you hate it so much
@@ -82,4 +82,4 @@ class Blog extends Component {
   }
 }
 
-export default Blog
+export default Resources

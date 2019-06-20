@@ -3,14 +3,14 @@ import { Link, graphql } from "gatsby"
 
 import Layout from "../components/layout"
 
-class Category extends Component {
+class Collection extends Component {
   render() {
     const posts = this.props.data.allMarkdownRemark.edges
     const postLinks = posts
       .filter(
         p =>
           !this.props.location.pathname
-            .replace(/categories\//, "")
+            .replace(/collections\//, "")
             .includes(p.node.fields.slug)
       )
       .map(post => (
@@ -26,26 +26,24 @@ class Category extends Component {
         <h1>
           {this.props.data.allMarkdownRemark.totalCount - 1}
           {` `}
-          posts for the category “{this.props.pageContext.category}”
+          posts for the collection “{this.props.pageContext.collection}”
         </h1>
         <ul>{postLinks}</ul>
         <p>
-          <Link to="/blog/categories/">Browse everything</Link>
+          <Link to="/resources/collections/">Browse everything</Link>
         </p>
       </Layout>
     )
   }
 }
 
-export default Category
+export default Collection
 
-export const categoryQuery = graphql`
-  query CategoryQuery($category: String) {
+export const collectionQuery = graphql`
+  query CollectionQuery($collection: String) {
     allMarkdownRemark(
       sort: { fields: [frontmatter___date], order: DESC }
-      filter: {
-        frontmatter: { category: { eq: $category }, draft: { ne: true } }
-      }
+      filter: { fields: { collection: { eq: $collection } } }
     ) {
       totalCount
       edges {

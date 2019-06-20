@@ -8,6 +8,7 @@ tags:
   - react
   - react-helmet
   - styled-components
+  - frontend
 ---
 
 This is a React Based GatsbyJS Boilerplate.

@@ -3,21 +3,21 @@ import { Link, graphql } from "gatsby"
 
 import Layout from "../../components/layout"
 
-class Categories extends Component {
+class Collections extends Component {
   render() {
-    const allCategories = this.props.data.allMarkdownRemark.group
+    const allCollections = this.props.data.allMarkdownRemark.group
 
     return (
       <Layout location={this.props.location}>
-        <h1>Categories</h1>
+        <h1>Collections</h1>
         <ul>
-          {allCategories.map(category => (
-            <li key={category.fieldValue}>
+          {allCollections.map(collection => (
+            <li key={collection.fieldValue}>
               <Link
                 style={{ textDecoration: `none` }}
-                to={`/blog/categories/${category.fieldValue}/`}
+                to={`/resources/collections/${collection.fieldValue}/`}
               >
-                {category.fieldValue} ({category.totalCount - 1})
+                {collection.fieldValue} ({collection.totalCount - 1})
               </Link>
             </li>
           ))}
@@ -27,15 +27,15 @@ class Categories extends Component {
   }
 }
 
-export default Categories
+export default Collections
 
-export const categoriesQuery = graphql`
-  query CategoriesQuery {
+export const collectionsQuery = graphql`
+  query CollectionsQuery {
     allMarkdownRemark(
       sort: { fields: [frontmatter___date], order: DESC }
       filter: { frontmatter: { draft: { ne: true } } }
     ) {
-      group(field: frontmatter___category) {
+      group(field: fields___collection) {
         fieldValue
         totalCount
       }
@@ -43,8 +43,8 @@ export const categoriesQuery = graphql`
   }
 `
 
-// export const categoriesQuery = graphql`
-//   query CategoriesQuery($slug: String!) {
+// export const collectionsQuery = graphql`
+//   query CollectionsQuery($slug: String!) {
 //     allMarkdownRemark(
 //       sort: { fields: [frontmatter___date], order: DESC }
 //       filter: {
@@ -67,7 +67,7 @@ export const categoriesQuery = graphql`
 //   }
 // `
 
-// export const categoriesQuery = graphql`
+// export const collectionsQuery = graphql`
 //   query TopicQuery($slug: String!, $fileAbsolutePath: String!) {
 //     allMarkdownRemark(
 //       sort: { fields: [frontmatter___date], order: DESC }

@@ -12,8 +12,9 @@ class Contact extends Component {
           <h2>I'm doing this to get a better gatsby template.</h2>
           <p>
             <Link to="/about">Want more about me?</Link> Maybe eventually a
-            contact form? Just read the <Link to={"blog"}>blog</Link> for me, if
-            you don't mind. Or go back to the <Link to="/">home page.</Link>
+            contact form? Just read the <Link to={"/resources"}>resources</Link>{" "}
+            for me, if you don't mind. Or go back to the{" "}
+            <Link to="/">home page.</Link>
           </p>
         </section>
         <section>

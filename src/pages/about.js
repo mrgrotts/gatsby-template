@@ -14,9 +14,10 @@ class About extends Component {
             know about me.
           </h2>
           <p>
-            Be sure to check out our <Link to="/blog">blog</Link>, or you can
-            always go back to the <Link to="/">home page</Link> but I would hope
-            you at least <Link to="/contact">contact me</Link> about it.
+            Be sure to check out our <Link to="/resources">resources</Link>, or
+            you can always go back to the <Link to="/">home page</Link> but I
+            would hope you at least <Link to="/contact">contact me</Link> about
+            it.
           </p>
         </section>
       </Layout>

@@ -22,7 +22,7 @@ class Tags extends Component {
             <li key={tag.fieldValue}>
               <Link
                 style={{ textDecoration: `none` }}
-                to={`/blog/tags/${toKebabCase(tag.fieldValue)}/`}
+                to={`/resources/tags/${toKebabCase(tag.fieldValue)}/`}
               >
                 {tag.fieldValue} ({tag.totalCount})
               </Link>
